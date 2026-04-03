@@ -1,24 +1,60 @@
 # Studex Marketing Factory
 
-Autonomous marketing experiments for X and TikTok.
-
-AI-powered content creation, hook testing, posting schedule optimization, and growth tracking.
+AI-powered autonomous marketing platform with virtual influencer creation, multi-platform posting, and intelligent analytics.
 
 ## Features
 
-- AI-powered content creation
-- Hook testing
-- Posting schedule optimization
-- Growth tracking
+- **Virtual Influencer Creation** - Generate AI influencers using Higgsfield AI
+- **Multi-Platform Posting** - Post to Twitter, Instagram, TikTok, LinkedIn, Facebook, Pinterest, Threads, Bluesky, YouTube via Blotato
+- **Auto Mode** - GSD + Ralph Loop for autonomous content creation and posting
+- **Analytics Dashboard** - HEX.tech powered analytics
 
-## Setup
-
-```bash
-# Add your setup instructions here
-```
-
-## Usage
+## Quick Start
 
 ```bash
-# Add usage instructions here
+# Install dependencies
+npm install
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your API keys
+
+# Run the system
+npm run start
 ```
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `HIGGSFIELD_API_KEY` | Your Higgsfield API key |
+| `BLOTATO_API_KEY` | Your Blotato API key |
+| `LOG_LEVEL` | Logging level (debug, info, warn, error) |
+
+## API Documentation
+
+- [Higgsfield API](https://docs.higgsfield.ai)
+- [Blotato API](https://help.blotato.com/api/publish-post)
+- [HEX.tech](https://hex.tech)
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────┐
+│           Studex Marketing Factory          │
+├─────────────────────────────────────────────┤
+│  ┌───────────┐  ┌───────────┐  ┌─────────┐ │
+│  │Higgsfield │→ │  Blotato  │→ │   HEX   │ │
+│  │  (Create) │  │  (Post)   │  │(Dashboard│
+│  └───────────┘  └───────────┘  └─────────┘ │
+├─────────────────────────────────────────────┤
+│         GSD + Ralph Loop Controller          │
+│  • Queue management                          │
+│  • Auto-retry on failure                     │
+│  • Scheduled runs                            │
+└─────────────────────────────────────────────┘
+```
+
+## License
+
+MIT
