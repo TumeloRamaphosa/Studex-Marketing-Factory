@@ -1,11 +1,11 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { HiggsfieldClient } from './clients/higgsfield.js';
 import { BlotatoClient } from './clients/blotato.js';
 import { GSDController } from './controllers/gsd Ralph.js';
+import ImageGenerator from './clients/imageGenerator.js';
 
-const higgsfield = new HiggsfieldClient();
+const imageGen = new ImageGenerator();
 const blotato = new BlotatoClient();
 const gsd = new GSDController();
 
@@ -14,14 +14,10 @@ console.log('=== Studex Marketing Factory ===\n');
 async function testConnections() {
   console.log('Testing API connections...\n');
   
-  try {
-    console.log('1. Testing Higgsfield API...');
-    const styles = await higgsfield.getSoulStyles();
-    console.log('   ✓ Higgsfield connected');
-    console.log('   Available styles:', styles.soul_styles?.length || 0);
-  } catch (e) {
-    console.log('   ✗ Higgsfield error:', e.message);
-  }
+  console.log('1. Testing Image Generator (Higgsfield)...');
+  const provider = process.env.IMAGE_PROVIDER || 'higgsfield';
+  console.log(`   Provider: ${provider}`);
+  console.log(`   Status: ${provider === 'higgsfield' ? 'Ready (fallback to Pollinations if down)' : 'Using Replicate'}`);
 
   try {
     console.log('\n2. Testing Blotato API...');
@@ -36,18 +32,19 @@ async function testConnections() {
 async function createVirtualInfluencer() {
   console.log('\n=== Creating Virtual Influencer ===\n');
   
-  const profile = await higgsfield.createInfluencerProfile(
-    'Alex',
-    'Young professional, trendy, urban lifestyle, startup founder vibe',
-    'realistic'
-  );
+  const profile = {
+    name: 'Alex',
+    description: 'Young professional, trendy, urban lifestyle, startup founder vibe',
+    style: 'realistic'
+  };
   
-  console.log('Profile created:', profile);
+  console.log('Profile:', profile);
   
-  const imageResult = await higgsfield.generateInfluencerImage(profile, 'coffee shop, modern, Instagram photo');
-  console.log('\nGenerated image result:', imageResult);
+  const result = await imageGen.generateInfluencerImage(profile, 'coffee shop, modern, Instagram photo');
+  console.log('\nGenerated image result:');
+  console.log(JSON.stringify(result, null, 2));
   
-  return imageResult;
+  return result;
 }
 
 async function postToSocialMedia() {
@@ -55,7 +52,7 @@ async function postToSocialMedia() {
   
   const content = {
     text: '🚀 New virtual influencer coming soon! #AI #Marketing #Studex',
-    mediaUrls: ['https://example.com/test-image.jpg']
+    mediaUrls: ['https://image.pollinations.ai/prompt/AI%20influencer?width=1024&height=1536&nologin=true']
   };
   
   const result = await blotato.postToMultiplePlatforms(content, ['twitter', 'instagram']);
@@ -67,7 +64,11 @@ async function postToSocialMedia() {
 async function runAutoMode() {
   console.log('\n=== Starting GSD + Ralph Auto Mode ===\n');
   
-  const profile = await higgsfield.createInfluencerProfile('Sarah', 'Fitness influencer, healthy lifestyle', 'realistic');
+  const profile = {
+    name: 'Sarah',
+    description: 'Fitness influencer, healthy lifestyle, gym enthusiast',
+    style: 'realistic'
+  };
   
   gsd.createContentJob(profile, 'gym workout', ['twitter', 'instagram']);
   
